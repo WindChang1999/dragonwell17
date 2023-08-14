@@ -449,6 +449,15 @@ jobs:
           path: ~/bootjdk/${{ env.BOOT_JDK_VERSION }}
           key: bootjdk-${{ runner.os }}-${{ env.BOOT_JDK_VERSION }}-${{ env.BOOT_JDK_SHA256 }}-v1
 
+      - name: Download boot JDK
+        run: |
+          mkdir -p "${HOME}/bootjdk/${BOOT_JDK_VERSION}"
+          wget -O "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" "${BOOT_JDK_URL}"
+          echo "${BOOT_JDK_SHA256} ${HOME}/bootjdk/${BOOT_JDK_FILENAME}" | sha256sum -c >/dev/null -
+          tar -xf "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" -C "${HOME}/bootjdk/${BOOT_JDK_VERSION}"
+          mv "${HOME}/bootjdk/${BOOT_JDK_VERSION}/"*/* "${HOME}/bootjdk/${BOOT_JDK_VERSION}/"
+        if: steps.bootjdk.outputs.cache-hit != 'true'
+
       - name: Restore jtreg artifact
         id: jtreg_restore
         uses: actions/download-artifact@v3
@@ -2022,6 +2031,7 @@ jobs:
       - linux_additional_build
       - linux_x64_test
       - linux_x86_test
+      - linux_aarch64_test
       - windows_x64_test
       - macos_x64_test
       - macos_aarch64_build
