@@ -356,6 +356,11 @@ jobs:
           imageroot=`find ${HOME}/jdk-linux-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }} -name release -type f`
           echo "imageroot=`dirname ${imageroot}`" >> $GITHUB_ENV
 
+      - name: Configure bash as default
+        run: |
+          sudo chsh -s /bin/bash $(whoami)
+
+
       - name: Run tests
         id: run_tests
         run: >
@@ -575,7 +580,6 @@ jobs:
           - hs/tier1 serviceability
           - dragonwell/hs feature
           - dragonwell/jdk feature
-
         include:
           - test: jdk/tier1 part 1
             suites: test/jdk/:tier1_part1
